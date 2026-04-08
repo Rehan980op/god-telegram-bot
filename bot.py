@@ -109,10 +109,10 @@ def get_plans(message):
 
 def finalize_channel(message, ch_id, ch_name):
     try:
-        raw_plans = message.text.split(',')
+        raw_plans = [p.strip() for p in message.text.replace('\n','').replace('\r','').split(',') if ':' in p]
         plans_dict = {}
         for p in raw_plans:
-            t, pr = p.strip().split(':')
+            t, pr = [x.strip() for x in p.split(':')]
             plans_dict[t] = pr
         
         channels_col.update_one({"channel_id": ch_id}, {"$set": {"name": ch_name, "plans": plans_dict, "admin_id": ADMIN_ID}}, upsert=True)
